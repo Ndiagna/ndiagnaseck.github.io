@@ -336,12 +336,16 @@
 
     /* Contact Form
      * ------------------------------------------------------ */
+    (function() {
+        emailjs.init("DP_J5V-HqduP4Vuoh");
+    })();
+    
     var ssContactForm = function() {
 
         /* local validation */
-	    $('#contactForm').validate({
+	    /* $('#contactForm').validate({
         
-            /* submit via ajax */
+            // submit via ajax /
             submitHandler: function(form) {
     
                 var sLoader = $('.submit-loader');
@@ -373,10 +377,11 @@
                         }
     
                     },
-                    error: function() {
-    
+                    error: function( status, error) {
+                        console.log("Erreur AJAX : ", status, error); // Affichez les erreurs dans la console
+
                         sLoader.slideUp("slow"); 
-                        $('.message-warning').html("Something went wrong. Please try again.");
+                        $('.message-warning').html("Une erreur est survenue. Veuillez réessayer.");
                         $('.message-warning').slideDown("slow");
     
                     }
@@ -384,10 +389,39 @@
                 });
             }
     
+        }); */
+       
+        document.getElementById('contactForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Empêche l'envoi classique du formulaire
+        
+            // Afficher le loader pendant l'envoi
+            document.querySelector('.submit-loader').style.display = 'block';
+        
+            // Récupérer les données du formulaire
+            var formData = {
+                contactName: document.getElementById('contactName').value,
+                contactEmail: document.getElementById('contactEmail').value,
+                contactSubject: document.getElementById('contactSubject').value,
+                contactMessage: document.getElementById('contactMessage').value
+            };
+        
+            // Envoi de l'e-mail via EmailJS
+            emailjs.send("service_yk6804w", "template_a5momrh", formData)
+                .then(function(response) {
+                    // Envoi réussi
+                    document.querySelector('.submit-loader').style.display = 'none';
+                    alert("E-mail envoyé avec succès !");
+                    document.getElementById('contactForm').reset();  // Réinitialiser le formulaire
+                }, function(error) {
+                    // Envoi échoué
+                    document.querySelector('.submit-loader').style.display = 'none';
+                    alert("Une erreur est survenue. Veuillez réessayer.");
+                });
         });
     };
 
-
+    
+    
    /* Back to Top
     * ------------------------------------------------------ */
     var ssBackToTop = function() {
